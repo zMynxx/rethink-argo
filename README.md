@@ -106,7 +106,7 @@ stringData:
   enableLfs: "true" # Enable git-lfs for this repository. Defaults to "false"
 ```
 ### Configure Projects, Policies and Clusters
-For the sake of readability, ease of search, debug, use and operate, and also to fully match the desired state describe in the Goal image, we will separate each and every cluster with it's own project and policies.
+For the sake of readability, ease of search, debug, use and operate, and also to fully match the desired state describe in the Goal image, we will separate each and every cluster with it's own project and policies. For the sake of learning, we will focus and/or create resource for the dev and prod only. However do make sure to implement the same methodology across all environments.
 
 ##### Clusters
 Let's set up the clusters first, we will create a secret for each of our cluster endpoints, notice the unique annotation, which is required by argocd.
@@ -125,7 +125,7 @@ data:
       }
     }
   name: "dev"
-  server: "https://dev.develeap.rethink-argo.com:6443"
+  server: "https://dev.rethink-argo.develeap.com:6443"
   project: "dev"
 metadata:
   labels:
@@ -170,11 +170,9 @@ spec:
         - p, proj:development:developer, logs, get, dev/*, allow
         - p, proj:development:developer, exec, create, dev/*, allow
 
-      groups: #OIDC Groups 
+      groups: #OIDC or Kubernetes RBAC Groups 
         - devops
         - developers
-        - finops
-        - mlops
 
   # Project description
   description: development environment
@@ -185,17 +183,17 @@ spec:
 
   destinations:
     ## Allow all access
-    - namespace: "*"
-      server: https://dev.develeap.rethink-argo.com:6443
+    - namespace: *
+      server: https://dev.rethink-argo.develeap.com:6443
       name: dev
 
   clusterResourceWhitelist:
-    - group: "*"
-      kind: "*"
+    - group: *
+      kind: *
 
   namespaceResourceWhitelist:
-    - group: "*"
-      kind: "*"
+    - group: *
+      kind: *
 
   # Enables namespace orphaned resource monitoring.
   orphanedResources:
@@ -220,13 +218,37 @@ metadata:
   name: argocd-rbac-cm
   namespace: argocd
 data:
-  policy.default: role:readonly
-  policy.csv: |
-    p, proj:development:developer, clusters, get, *, allow
-    p, proj:development:developer, repositories, get, *, allow
-    p, proj:development:developer, projects, get, *, allow
-
-    g, your-github-org:your-team, role:org-admin
+  scopes: '[groups]' # include 'emails' if using OIDC
+  policy.default: role:none
+  policy.csv: |-
+    # Access Control
+    p, role:none, applications, get, */*, deny
+    p, role:none, certificates, get, *, deny
+    p, role:none, clusters, get, *, deny
+    p, role:none, repositories, get, *, deny
+    p, role:none, projects, get, *, deny
+    p, role:none, accounts, get, *, deny
+    p, role:none, gpgkeys, get, *, deny
+  
+    # Give developers access to the different environments
+    p, proj:development:developer, clusters, get, https://dev.rethink-argo.develeap.com:6443, allow
+    p, proj:development:developer, repositories, get, https://github.com/develeap/rethink-argo.git, allow
+    p, proj:development:developer, projects, get, development, allow
+    g, develeap:developers, proj:development:developer
+    
+    # .... Ommitted .. #
+    
+    p, proj:production:developer, clusters, get, https://prod.rethink-argo.develeap.com:6443, allow
+    p, proj:production:developer, repositories, get, https://github.com/develeap/rethink-argo.git, allow
+    p, proj:production:developer, projects, get, production, allow
+    g, develeap:developers, proj:production:developer
+    
+    
+    # Give devops the ability to administer
+    p, role:devops, clusters, *, *, allow
+    p, role:devops, repositories, get, https://github.com/develeap/rethink-argo.git, allow
+    p, role:devops, projects, *, *, allow
+    g, develeap:devops, role:devops
 ```
 
 
