@@ -375,7 +375,48 @@ template:
       server: '{{ .server }}'
       namespace: '{{ .path.basename }}'
 ```
-# 
+## Sync waves, and Sync options
+The are both related to sync, however quite different.
+
+Sync option are the different syncing options provided by ArgoCD for us to decided how it should behave on sync occasions.
+
+Sync waves on the other hand, are meant to determine when to sync, at what stage, which is also called "wave".
+
+### The different Sync Options
+These could be set either by the `[﻿argocd.argoproj.io/sync-options](https://argocd.argoproj.io/sync-options)` 
+
+separated by `,` or alternatively, set under the spec.syncPolicy.syncOptions `spec.syncPolicy.syncOptions`  field in the application manifest. Most annotations could also be used on specific resources, and not only applications.
+
+```
+spec:
+  syncPolicy:
+    syncOptions:
+      - Prune=false    # Do no prune, e.g leave a Pod which finished it's execution ( completed 0/1)
+      - Validate=false # Do no validate the kubernetes types
+      - SkipDryRunOnMissingResource=true # Meant to ignore custom CRDs which argo can't evaluate their health
+      - Delete=false   # Prevent argo from destroying, e.g PVC
+      - ApplyOutOfSyncOnly=true # Sync only our-of-sync resources
+      - PrunePropagationPolicy=foreground # Use a foreground process
+      - PruneLast=true # Prune as a final step, after all "waves", etc
+      - CreateNamespace=true # Allow for namespace to be created in nonexistent 
+      - ServerSideApply=true # Apply using server side, meant to be used in special cases, like 'too big' annotations.
+      - Replace=true   # Replace the entire resource, instead of applying the diff.
+      - FailOnSharedResource=true # Fail in case of shared resource use by different applications.
+      - RespectIgnoreDifferences=true # Tell argo to ignore specific differences between desired and actual stage.
+```
+### Sync Waves
+Argo sync process is complicated, and has the following precedence:
+
+1) Sync Phase (PreSync/Sync/PostSync/SyncFail/PostDelete)
+
+2) Sync Wave (Set be values, lowest first)
+
+3) By Kind (Namespace first, then other kubernetes resource types, and eventually CRDs)
+
+4) By name (alphabetically).
+
+Sync wave are used to apply different configurations in stages within a Phase, for example, only apply the `demo` application's deployment after `vault`  application had been applied and the `my-secret` has been created.
+
 
 
 
