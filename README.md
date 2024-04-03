@@ -281,7 +281,7 @@ spec:
     metadata:
       # use folder name as the application's name
       # for example, nginx
-      name: "{{path.basename}}"
+      name: '{{ .path.basename }}'
       
       # Application must be deployed into the same namespace as our argocd server
       # for argo to manage and visualize in the dashboard
@@ -304,7 +304,7 @@ spec:
         
         # The generator above creates a list, where each item is a path within the repository
         # for example, https://github.com/smipin/gitops/charts/nginx
-        path: "{{path}}"
+        path: '{{ .path }}'
         helm:
           # Helm values files for overriding values in the helm chart
           # The path is relative to the spec.source.path directory defined above
@@ -316,7 +316,7 @@ spec:
         
         # use folder name as the application's namespace
         # also matches the application name.
-        namespace: "{{path.basename}}"
+        namespace: '{{ path.basename }}'
 ```
 Now that we understand what is an ApplicationSet, it's abilities, structure and so forth, let's apply our knowledge to match our desired architecture.
 
@@ -416,6 +416,104 @@ Argo sync process is complicated, and has the following precedence:
 4) By name (alphabetically).
 
 Sync wave are used to apply different configurations in stages within a Phase, for example, only apply the `demo` application's deployment after `vault`  application had been applied and the `my-secret` has been created.
+
+Le'ts look at another example:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset-stage-1
+  namespace: argocd
+spec:
+  ## ... Ommitted ...##
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: "1"
+ ## ... Ommitted ...##
+ ---
+ apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset-stage-2
+  namespace: argocd
+spec:
+  ## ... Ommitted ...##
+  template:
+    metadata:
+      name: "{{path.basename}}"
+      namespace: argocd
+      annotations:
+        argocd.argoproj.io/sync-wave: "2"
+  ## ... Ommitted ...##
+```
+## Notifications
+Argo notifications used to be a independent project by Argo Project, which served as an extension to the basic ArgoCD ecosystem. It is meant to provide a unified notifications system, according to different events, which could be quite custom to ArgoCD. An ArgoCD Application's failed sync operation, for example.
+
+It uses web-hooks to integrate and notify different notification services according to the specified rules. Let's take a look at an example:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  annotations:
+    notifications.argoproj.io/subscribe.on-sync-failed.slack: "<my-slack-channel>"
+```
+Setup is quite simple, all your need is an secret holding the credentials. Each notification service requires different fields. Here's a slack example:
+
+```
+# The kubernetes secret
+apiVersion: v1
+kind: Secret
+metadata:
+    name: <secret-name>
+stringData:
+    slack-token: <Oauth-access-token>
+---
+# The ArgoCD notification configurations
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-notifications-cm
+data:
+  
+  # This tells argo `notification's controller` how to find and use the credentials, whenever the slack service is being used.
+  service.slack: |
+    token: $slack-token 
+```
+You could also use custom messaging templates, like so:
+
+```
+template.app-sync-failed: |
+message: |
+  Application {{.app.metadata.name}} sync is {{.app.status.sync.status}}.
+  Application details: {{.context.argocdUrl}}/applications/{{.app.metadata.name}}.
+slack:
+  attachments: |
+    [{
+      "title": "{{.app.metadata.name}}",
+      "title_link": "{{.context.argocdUrl}}/applications/{{.app.metadata.name}}",
+      "color": "#ff0000",
+      "fields": [{
+        "title": "Sync Status",
+        "value": "{{.app.status.sync.status}}",
+        "short": true
+      }, {
+        "title": "Repository",
+        "value": "{{.app.spec.source.repoURL}}",
+        "short": true
+      }]
+    }]
+  # Aggregate the messages to the thread by git commit hash
+  groupingKey: "{{.app.status.sync.revision}}"
+  notifyBroadcast: true
+```
+![image.png](/.eraser/F95eLPbElWDqPYpdYBwV___TQmgywa6AXge7WJMnlClJmSiIXA2___USa7OY5y_JlT8JH2rO7o0.png "image.png")
+
+
 
 
 
