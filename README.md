@@ -11,13 +11,15 @@ As of today, most significant tooling by Argo are:
 - Events
 - Workflows
 - Rollouts
+---
+
 ## What's the plan?
 We are going to start by talk about basic and advanced ArgoCD features:
 
 - ApplicationSet - What is it and how to use it ?
 - Notifications 101
 - Sync waves for the typical project
-- Multi-Cluster management best practices
+- Multi-Cluster deployment best practices
 - Webhooks, polling - why and why not ?
 - Different Sync options
 Then we will try our Argo Rollouts and Argo Workflows, and examine the use cases, benefits.
@@ -39,7 +41,7 @@ By the end of this session we should be capable of managing multiple Kubernetes 
 5. Create Kustomize overlay for the different environments to match the manifests.
 6. Create an application to be deployed in a later sync wave.
 7. Set up notification via slack channel.
-
+---
 
 ## GitHub Integration: Webhook vs. Polling
 By design, ArgoCD uses polling to sync the desired state with the actual state. However, something we might want / need to use webhook.
@@ -52,7 +54,7 @@ Let's compare the two:
 | Automatically triggers sync | v | x |
 | Diff up to 3 minutes | v | x |
 | Easy to setup | v | v |
-#### [Webhook setup]([﻿argo-cd.readthedocs.io/en/stable/operator-manual/webhook/#git-webhook-configuration](https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/#git-webhook-configuration)):
+#### [﻿Webhook setup](https://argo-cd.readthedocs.io/en/stable/operator-manual/webhook/#git-webhook-configuration):
 In order for the webhook to work as expected, a few thing must be in order. Firstly, our ArgoCD endpoint must be available for GitHub, so it could invoke it from outside our environment. Then, under repository `Settings > Webhooks > Add Webhook` set the following:
 
 ```
@@ -357,10 +359,8 @@ And here's the template doing so:
 template:
   metadata:
     name: '{{ .path.basename }}'
-  
     ## ... Ommitted ...##
   spec:
-
     ## ... Ommitted ...##
 
     # 'name' field of the Secret
@@ -429,7 +429,7 @@ spec:
   ## ... Ommitted ...##
   template:
     metadata:
-      name: "{{path.basename}}"
+      name: '{{ .path.basename }}'
       namespace: argocd
       annotations:
         argocd.argoproj.io/sync-wave: "1"
@@ -444,7 +444,7 @@ spec:
   ## ... Ommitted ...##
   template:
     metadata:
-      name: "{{path.basename}}"
+      name: '{{ .path.basename }}'
       namespace: argocd
       annotations:
         argocd.argoproj.io/sync-wave: "2"
@@ -460,7 +460,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   annotations:
-    notifications.argoproj.io/subscribe.on-sync-failed.slack: "<my-slack-channel>"
+    notifications.argoproj.io/subscribe.app-sync-failed.slack: "<my-slack-channel>"
 ```
 Setup is quite simple, all your need is an secret holding the credentials. Each notification service requires different fields. Here's a slack example:
 
@@ -511,9 +511,207 @@ slack:
   groupingKey: "{{.app.status.sync.revision}}"
   notifyBroadcast: true
 ```
+Here's an example of a successful sync notification via slack:
+
 ![image.png](/.eraser/F95eLPbElWDqPYpdYBwV___TQmgywa6AXge7WJMnlClJmSiIXA2___USa7OY5y_JlT8JH2rO7o0.png "image.png")
 
+### Behind the scenes
+The ArgoCD Notification extention is simple a wrapper around Kubernetes Jobs + ArgoCD sync phases, and can simply be replaced with using:
 
+```
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: app-slack-notification-fail-
+  annotations:
+    argocd.argoproj.io/hook: SyncFail
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: slack-notification
+        image: curlimages/curl
+        command: 
+          - "curl"
+          - "-X"
+          - "POST"
+          - "--data-urlencode"
+          - "payload={\"channel\": \"#somechannel\", \"username\": \"hello\", \"text\": \"App Sync failed\", \"icon_emoji\": \":ghost:\"}"
+          - "https://hooks.slack.com/services/..."
+      restartPolicy: Never
+  backoffLimit: 2 
+```
+However, it allows for a more unified experience, and offer a [﻿catalog](https://argocd-notifications.readthedocs.io/en/stable/catalog/), containing triggers and templates ready to go, without the need to custom create and configure one yourself. Also, there's a metrics endpoint for prometheus scraping, and they offer a granafa dashboard json file.
+
+## [﻿Debugging notifications](https://argocd-notifications.readthedocs.io/en/stable/troubleshooting/)﻿
+When in comes to debugging issue with notifications / trigger there's a cli tool mean to help and get better information about the process.
+
+```
+argocd-notifications template notify app-sync-failed guestbook --recipient slack:my-team-channel
+```
+---
+
+## Argo [﻿Rollouts](https://argo-rollouts.readthedocs.io/en/stable/)﻿
+The rollout project is design to reduce the overhead required the different deployment approaches. Whether you organization use blue-green or canary deployments for a given service, argo rollout can do it with ease.
+
+No addition deployments needed, no services and load balancing, all in a simple Rollout manifest. Rollouts will replace our `Kind: Deployment` manifest, with the addition of a `strategy` specifications added.
+
+`nvim -d deployment.yaml rollout.yaml` results with:
+
+![Screenshot 2024-04-03 at 16.37.27.png](/.eraser/F95eLPbElWDqPYpdYBwV___TQmgywa6AXge7WJMnlClJmSiIXA2___lh-w8EcNJm4_jTpf-vVjO.png "Screenshot 2024-04-03 at 16.37.27.png")
+
+The following is an example of a canary deployment:
+
+```
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-canary
+spec:
+  replicas: 5
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: rollout-canary
+  template:
+    metadata:
+      labels:
+        app: rollout-canary
+    spec:
+      containers:
+      - name: rollouts-demo
+        image: argoproj/rollouts-demo:blue
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      # The following pause step will pause the rollout indefinitely until manually resumed.
+      # Rollouts can be manually resumed by running `kubectl argo rollouts promote ROLLOUT`
+      - pause: {}
+      - setWeight: 40
+      - pause: {duration: 40s}
+      - setWeight: 60
+      - pause: {duration: 20s}
+      - setWeight: 80
+      - pause: {duration: 20s}
+```
+In this example, a rollout will only "rollout" 1 replica (20% of the desired total replicas) of a new version, until it is manually "promoted" by either using the "promote" button in the UI or by leveraging the cli with `kubectl argo rollouts promote ROLLOUT_NAME` .
+
+Rollout greatest benefit is when end-to-end or any other types of tests need to be run and set the promotion according to the test results.
+
+Similar to healthchecks in Docker, or using probes in kubernetes, just a little easier and greater room to move. Let's take a look into an example:
+
+```
+# This AnalysisTemplate will run a Kubernetes Job every 5 seconds, with a 50% chance of failure.
+# When the number of accumulated failures exceeds failureLimit, it will cause the analysis run to
+# fail, and subsequently cause the rollout or experiment to abort.
+kind: AnalysisTemplate
+apiVersion: argoproj.io/v1alpha1
+metadata:
+  name: random-fail
+spec:
+  metrics:
+  - name: random-fail
+    count: 2
+    interval: 5s
+    failureLimit: 1
+    provider:
+      job:
+        spec:
+          template:
+            spec:
+              containers:
+              - name: sleep
+                image: alpine:3.8
+                command: [sh, -c]
+                args: [FLIP=$(($(($RANDOM%10))%2)) && exit $FLIP]
+              restartPolicy: Never
+          backoffLimit: 0
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: rollout-canary
+spec:
+  ## ... Ommitted ... ##
+  strategy:
+    canary:
+      steps:
+      - setWeight: 20
+      # An AnalysisTemplate is referenced at the second step, which starts an AnalysisRun after
+      # the setWeight step. The rollout will not progress to the following step until the
+      # AnalysisRun is complete. A failure/error of the analysis will cause the rollout's update to
+      # abort, and set the canary weight to zero.
+      - analysis:
+        templates:
+          - templateName: random-fail
+      - setWeight: 40
+      - pause: {duration: 40s}
+      - setWeight: 60
+      - pause: {duration: 20s}
+      - setWeight: 80
+      - pause: {duration: 20s}
+```
+I love rollouts, however I hate shifting from the simple yet classy kubernetes Deployment manifest, and removing it from every chart and re-writing templates accordingly seems like to much it integrate it.
+
+So I'd like to share a better approach, with the following strategy:
+
+1. Set the deployment's `replica` filed to `0` , so we can allow the `rollout` take charge of them.
+2. Create a separate `rollout.yaml` with the rolling strategy set, referencing the original deployment.
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/instance: rollout-canary
+  name: simple-deployment
+spec:
+  # Replicas set to 0, to be controlled by the rollout instead.
+  replicas: 0
+  selector:
+    matchLabels:
+      app: simple-deployment
+  template:
+    metadata:
+      labels:
+        app: simple-deployment
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: simple-deployment-rollout
+spec:
+  replicas: 5
+  revisionHistoryLimit: 2
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: simple-deployment
+  strategy:
+    ## ... Ommitted ... ##
+```
+---
+
+## Argo Workflows
+Another wrapper from Argo's familiy, meant to complicate thing further by having weird funky syntax. I really cannot recommend it in comparison with github actions / jenkins, however it's key benefits might be actually running and / or setting in on-prem for CI/CD, data processing, ML, etc without the overhead of golden images and such.
+
+---
+
+# ArgoCD [﻿Autopilot](https://github.com/argoproj-labs/argocd-autopilot)﻿
+Relatively new project by the Argo team, first released in 2021, meant to help with bootstrapping and onboarding of a new repository while following GitOps best practices. It's cli acts as a wrapper to usual argocd cli tool using common practices and flagging system. So if you are new to git or argocd and wish to make your future easier by following best methods and compliance, be sure to check it out.
+
+This cli tool leveraged your `.gitconfig` and `.kubeconfig` , and a repository's API KEY.
 
 
 
