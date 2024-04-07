@@ -1,9 +1,8 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   annotations:
-    # argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
     argocd.argoproj.io/sync-options: PruneLast=true
     argocd.argoproj.io/sync-wave: '-2'
   creationTimestamp:
@@ -16,15 +15,15 @@ spec:
   description: production project
   destinations:
     - namespace: '*'
-      server: https://kubernetes.default.svc
-      name: prod
-  namespaceResourceWhitelist:
+      server: '*'
+      # server: https://kubernetes.default.svc
+  sourceWhitelist:
     - group: '*'
       kind: '*'
   sourceRepos:
     - https://github.com/develeap/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
-  permitOnlyProjectScopedClusters: true
+    # permitOnlyProjectScopedClusters: true
 status: {}
 ---
 apiVersion: argoproj.io/v1alpha1
