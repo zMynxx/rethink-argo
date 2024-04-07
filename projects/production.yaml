@@ -15,8 +15,7 @@ spec:
   description: production project
   destinations:
     - namespace: '*'
-      server: '*'
-      # server: https://kubernetes.default.svc
+      server: https://kubernetes.default.svc
   sourceWhitelist:
     - group: '*'
       kind: '*'
