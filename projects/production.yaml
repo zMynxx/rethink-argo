@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -74,6 +75,7 @@ spec:
       name: production-{{ userGivenName }}
       namespace: argocd
     spec:
+      permitOnlyProjectScopedClusters: true
       destination:
         namespace: '{{ destNamespace }}'
         server: '{{ destServer }}'
