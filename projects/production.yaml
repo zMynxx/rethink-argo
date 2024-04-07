@@ -20,7 +20,7 @@ spec:
   namespaceResourceWhitelist:
     - group: '*'
       kind: '*'
-  sourceRepos: ['https://github.com/develeap/rethink-argo.git''']
+  sourceRepos: ['https://github.com/develeap/rethink-argo.git']
 status: {}
 ---
 apiVersion: argoproj.io/v1alpha1
