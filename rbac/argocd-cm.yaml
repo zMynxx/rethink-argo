@@ -9,4 +9,6 @@ metadata:
 data:
   url: https://argocd.develeap.com
   accounts.developer: login
+  accounts.developer.enabled: 'true'
   accounts.devops: login
+  accounts.devops.enabled: 'true'

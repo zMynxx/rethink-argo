@@ -5,7 +5,6 @@ metadata:
     argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
     argocd.argoproj.io/sync-options: PruneLast=true
     argocd.argoproj.io/sync-wave: '-2'
-  creationTimestamp:
   name: development
   namespace: argocd
 spec:
@@ -31,9 +30,6 @@ spec:
     - namespace: '*'
       server: https://kubernetes.default.svc
       name: development
-  sourceWhitelist:
-    - group: '*'
-      kind: '*'
   sourceRepos:
     - https://github.com/develeap/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
