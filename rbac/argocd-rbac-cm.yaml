@@ -24,4 +24,12 @@ data:
     p, proj:production:developer, projects, get, production, allow
     g, develeap:developers, proj:production:developer
     g, developer, proj:production:developer
-  policy.devops.csv: "p, role:devops, clusters, *, *, allow\np, role:devops, repositories, *, *, allow\np, role:devops, projects, *, *, allow \np, role:devops, applications, *, */*, allow\np, role:devops, certificates, *, *, allow \np, role:devops, accounts, get, *, allow\np, role:devops, gpgkeys, *, *, allow\ng, devops, role:devops"
+  policy.devops.csv: |-
+    p, role:devops, clusters, *, *, allow
+    p, role:devops, repositories, *, *, allow
+    p, role:devops, projects, *, *, allow
+    p, role:devops, applications, *, *, allow
+    p, role:devops, certificates, *, *, allow
+    p, role:devops, accounts, *, *, allow
+    p, role:devops, gpgkeys, *, *, allow
+    g, devops, role:devops
