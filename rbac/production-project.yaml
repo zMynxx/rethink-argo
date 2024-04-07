@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd.argoproj.io/sync-options: PruneLast=true
+    argocd.argoproj.io/sync-wave: '-2'
+  creationTimestamp:
+  name: production
+  namespace: argocd
+spec:
+  roles:
+    - name: devops
+      description: DevOps role for production project
+      policies: ['p, proj:production:devops, *, *, production/*, allow']
+      # groups: ['systems:devops']
+    - name: developer
+      description: Developer role for production project
+      policies:
+        ## Structure: p, <role/user/group>, <resource>, <action>, <appproject>/<object>
+        - p, proj:production:developer, applicationsets, get, production/*, allow
+        - p, proj:production:developer, applications, get, production/*, allow
+        - p, proj:production:developer, applications, sync, production/*, allow
+        - p, proj:production:developer, logs, get, production/*, allow
+        # groups: ['systems:developers']
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  description: production project
+  destinations:
+    - namespace: '*'
+      server: https://kubernetes.default.svc
+      name: production
+  sourceRepos:
+    - https://github.com/develeap/rethink-argo.git
+    - https://github.com/argoproj-labs/argocd-autopilot.git
+  permitOnlyProjectScopedClusters: true

@@ -9,6 +9,20 @@ metadata:
   name: production
   namespace: argocd
 spec:
+  roles:
+    - name: devops
+      description: DevOps role for production project
+      policies: ['p, proj:production:devops, *, *, production/*, allow']
+      groups: ['systems:devops']
+    - name: developer
+      description: Developer role for production project
+      policies:
+        ## Structure: p, <role/user/group>, <resource>, <action>, <appproject>/<object>
+        - p, proj:production:developer, applicationsets, get, production/*, allow
+        - p, proj:production:developer, applications, get, production/*, allow
+        - p, proj:production:developer, applications, sync, production/*, allow
+        - p, proj:production:developer, logs, get, production/*, allow
+      groups: ['systems:developers']
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
