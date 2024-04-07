@@ -1,4 +1,3 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -17,14 +16,14 @@ spec:
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
-      name: prod
+      name: in-cluster
   sourceWhitelist:
     - group: '*'
       kind: '*'
   sourceRepos:
     - https://github.com/develeap/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
-    # permitOnlyProjectScopedClusters: true
+  permitOnlyProjectScopedClusters: true
 status: {}
 ---
 apiVersion: argoproj.io/v1alpha1
