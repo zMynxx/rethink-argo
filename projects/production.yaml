@@ -1,4 +1,3 @@
----
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -17,7 +16,7 @@ spec:
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
-      name: in-cluster
+      name: production
   sourceWhitelist:
     - group: '*'
       kind: '*'
@@ -26,24 +25,6 @@ spec:
     - https://github.com/argoproj-labs/argocd-autopilot.git
   permitOnlyProjectScopedClusters: true
 status: {}
----
-kind: Secret
-data:
-  # Within Kubernetes these fields are actually encoded in Base64; they are decoded here for convenience.
-  # (They are likewise decoded when passed as parameters by the Cluster generator)
-  config: |
-    {
-      "tlsClientConfig": {
-        "insecure": false,
-        "caData": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURCVENDQWUyZ0F3SUJBZ0lJTEpJbmNiOHVaK2N3RFFZSktvWklodmNOQVFFTEJRQXdGVEVUTUJFR0ExVUUKQXhNS2EzVmlaWEp1WlhSbGN6QWVGdzB5TkRBME1EY3dPVE0xTWpoYUZ3MHpOREEwTURVd09UUXdNamhhTUJVeApFekFSQmdOVkJBTVRDbXQxWW1WeWJtVjBaWE13Z2dFaU1BMEdDU3FHU0liM0RRRUJBUVVBQTRJQkR3QXdnZ0VLCkFvSUJBUURNNUdOck9UQWV4Zzc2b0h1ZHhNakk1bnM3WUhZZnBUaUJhdFdwV3hueGdOQm1YbHIyM2puZUwwdEoKa2p0MUgyajBaRDNuTUNOOXdZSFkzQXpmYUw3d0NyNmxXbTAvaU5QeVhpSk53WUlGNlF0NDR3cDhHdGdYYllkQQpkY3pNcDdSVXBtOWhZVVJuUUk0TldQZU92T2RReW5yTzYrTkI2N2xlTDNvU01seUg4NTROV3hQR3lLbmFlcUYrCkc2SG5qNjRFRzJEZ2U2SnJyYXlScUpHdWw0WTdUK0tBTGhGRFFrSG10bHRrMlhaOU90ZFlhazV5b1hlUTJYbkUKRXlBTS8vcDV5SmY1cUNGMUpzSWNGbEpyeU9rVU5UdGVlYVNNbkNzTnhxandDWUpWNGNrcGFZT3JBRDNGYmQwKwp5MGNOWVlBUWZqdjdZWGVQNkR6OUdTVExUblZaQWdNQkFBR2pXVEJYTUE0R0ExVWREd0VCL3dRRUF3SUNwREFQCkJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXQkJRZmNtanV3RUs5cjhrN1lpM29IOGVBZWUxSnlUQVYKQmdOVkhSRUVEakFNZ2dwcmRXSmxjbTVsZEdWek1BMEdDU3FHU0liM0RRRUJDd1VBQTRJQkFRQTVjVDg5WFQ3NwpVYWxPWGRwOGFMejdOODlyQjF2OGdQNS9HRG5LZVRIYzlha3BDVWNhV0g4UnJHK0RvaWUwNGZETE15ZnVacERQCldPV05IejlGU1ZmbGFGbUhBN01GSzNSTk9ObDJpSFdoL2lRbmVLd0RtWEpKazdQaW43OWM4bEMyZFc0NUhqWU0KNU03RFZITStHYnNzTW1KaWZZR3pqV3JyMDFLdHp1VE1pMG5LcXJBdVd1TytnMW1ZRWhBb3RMSHMzaVNPNjJpNwpTTXJnREt2N0tGV1RiU3U0c0liTW9QdklXNjFwTG5nSVAxakU3dTNGcVZqQm5IT0RKYmw4K2NVWDdsalIxRUd1CkFmRklKazlYR29FWHBSdm5POTNvQ0Z6UmZtN2ZqZWwvSEZHSmI5Yy9aY09DRS9TNjdXeDg1R3h3ZVA5UmxsalYKcnQwTXdPbFp3YTVECi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0KCg=="
-      }
-    }
-  name: production cluster
-  server: https://kubernetes.default.svc
-  project: production
-metadata:
-  labels:
-    argocd.argoproj.io/secret-type: cluster
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
