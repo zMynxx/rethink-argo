@@ -1,3 +1,4 @@
+---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
@@ -16,6 +17,7 @@ spec:
   destinations:
     - namespace: '*'
       server: https://kubernetes.default.svc
+      name: prod
   sourceWhitelist:
     - group: '*'
       kind: '*'
