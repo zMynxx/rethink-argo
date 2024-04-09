@@ -17,10 +17,10 @@ spec:
       description: Developer role for development project
       policies:
         ## Structure: p, <role/user/group>, <resource>, <action>, <appproject>/<object>
-        - p, proj:development:developer, applicationsets, get, development/*, allow
-        - p, proj:development:developer, applications, get, development/*, allow
-        - p, proj:development:developer, applications, sync, development/*, allow
-        - p, proj:development:developer, logs, get, development/*, allow
+        - p, proj:development:developer, applicationsets, *, development/*, allow
+        - p, proj:development:developer, applications, *, development/*, allow
+        - p, proj:development:developer, applications, *, development/*, allow
+        - p, proj:development:developer, logs, *, development/*, allow
         # groups: ['systems:developers']
   clusterResourceWhitelist:
     - group: '*'
