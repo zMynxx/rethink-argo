@@ -27,6 +27,9 @@ spec:
       containers:
         - name: argocd-repo-server
           volumeMounts:
+            - mountPath: /.config/sops/age/key.txt
+              name: sops-age
+              subPath: key.txt
             - mountPath: /usr/local/bin/kustomize
               name: custom-tools
               subPath: kustomize
@@ -34,10 +37,8 @@ spec:
             - mountPath: /.config/kustomize/plugin/viaduct.ai/v1/ksops/ksops
               name: custom-tools
               subPath: ksops
-            - mountPath: /.config/sops/age/key.txt
-              name: sops-age
-              readOnly: true
-              subPath: age
+              # readOnly: true
+              # subPath: age
           # 4. Set the XDG_CONFIG_HOME env variable to allow kustomize to detect the plugin
           env:
             - name: XDG_CONFIG_HOME
