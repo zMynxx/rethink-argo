@@ -19,7 +19,10 @@ configMapGenerator:
   literals:
   - scopes='[groups]'
   - policy.default=role:none
-  - policy.default.csv=p, role:none, applications, get, */*, deny
+  name: argocd-rbac-cm
+- behavior: merge
+  files:
+  - policy.default.csv
   name: argocd-rbac-cm
 kind: Kustomization
 namespace: argocd
