@@ -1,0 +1,8 @@
+p, role:devops, clusters, *, *, allow
+p, role:devops, repositories, *, *, allow
+p, role:devops, projects, *, *, allow
+p, role:devops, applications, *, *, allow
+p, role:devops, certificates, *, *, allow
+p, role:devops, accounts, *, *, allow
+p, role:devops, gpgkeys, *, *, allow
+g, devops, role:devops
