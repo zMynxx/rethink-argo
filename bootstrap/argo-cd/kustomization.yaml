@@ -17,9 +17,12 @@ configMapGenerator:
   name: argocd-cm
 - behavior: merge
   literals:
+  - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
+  name: argocd-cm
+- behavior: merge
+  literals:
   - scopes='[groups]'
   - policy.default=role:none
-  - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
   name: argocd-rbac-cm
 - behavior: merge
   files:
