@@ -1,4 +1,4 @@
 accounts.developer=login
-accounts.developer.enabled='true'
+accounts.developer.enabled=true
 accounts.devops=login
-accounts.devops.enabled='true'
+accounts.devops.enabled=true
