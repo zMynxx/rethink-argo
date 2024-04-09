@@ -31,6 +31,6 @@ spec:
       server: https://kubernetes.default.svc
       name: production
   sourceRepos:
-    - https://github.com/develeap/rethink-argo.git
+    - https://github.com/zmynxx/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
   permitOnlyProjectScopedClusters: true
