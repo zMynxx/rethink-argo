@@ -19,13 +19,7 @@ configMapGenerator:
   literals:
   - scopes='[groups]'
   - policy.default=role:none
-  - policy.default.csv=p, role:none, applications, get, */*, deny
-  - policy.default.csv=p, role:none, certificates, get, *, deny
-  - policy.default.csv=p, role:none, clusters, get, *, deny
-  - policy.default.csv=p, role:none, repositories, get, *, deny
-  - policy.default.csv=p, role:none, projects, get, *, deny
-  - policy.default.csv=p, role:none, accounts, get, *, deny
-  - policy.default.csv=p, role:none, gpgkeys, get, *, deny
+  - policy.default.csv=p, role:none, applications, get, */*, deny\np, role:none, certificates, get, *, deny
   name: argocd-rbac-cm
 kind: Kustomization
 namespace: argocd
