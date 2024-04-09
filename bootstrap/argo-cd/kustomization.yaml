@@ -3,10 +3,10 @@ configMapGenerator:
 - behavior: merge
   literals:
   - |
-    accounts.developer: login
-    accounts.developer.enabled: 'true'
-    accounts.devops: login
-    accounts.devops.enabled: 'true'
+    accounts.developer=login
+    accounts.developer.enabled='true'
+    accounts.devops=login
+    accounts.devops.enabled='true'
     repository.credentials=- passwordSecret:
         key: git_token
         name: autopilot-secret
