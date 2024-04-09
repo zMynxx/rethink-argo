@@ -19,6 +19,7 @@ configMapGenerator:
   literals:
   - scopes='[groups]'
   - policy.default=role:none
+  - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
   name: argocd-rbac-cm
 - behavior: merge
   files:
@@ -30,9 +31,3 @@ kind: Kustomization
 namespace: argocd
 resources:
 - github.com/argoproj-labs/argocd-autopilot/manifests/base?ref=v0.4.17
-patches:
-- path: kustomize-flags.patch.yaml
-  target:
-    kind: ConfigMap
-    name: argocd-cm
-    namespace: argocd
