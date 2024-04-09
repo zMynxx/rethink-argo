@@ -18,11 +18,9 @@ configMapGenerator:
 - behavior: merge
   literals:
   - scopes='[groups]'
-  - |
-    policy.default=-
+  - policy.default=
       role:none
-  - |
-    policy.default.csv=-
+  - policy.default.csv=
       p, role:none, applications, get, */*, deny
       p, role:none, certificates, get, *, deny
       p, role:none, clusters, get, *, deny
@@ -30,8 +28,7 @@ configMapGenerator:
       p, role:none, projects, get, *, deny
       p, role:none, accounts, get, *, deny
       p, role:none, gpgkeys, get, *, deny
-  - |
-    policy.developers.csv=-
+  - policy.developers.csv=
       p, proj:development:developer, clusters, get, https://kubernetes.default.svc:6443, allow
       p, proj:development:developer, repositories, get, https://github.com/zmynxx/rethink-argo.git, allow
       p, proj:development:developer, projects, get, development, allow
@@ -41,8 +38,7 @@ configMapGenerator:
       p, proj:production:developer, projects, get, production, allow
       g, develeap:developers, proj:production:developer
       g, developer, proj:production:developer
-  - |
-    policy.devops.csv=-
+  - policy.devops.csv=
       p, role:devops, clusters, *, *, allow
       p, role:devops, repositories, *, *, allow
       p, role:devops, projects, *, *, allow
