@@ -15,9 +15,7 @@ configMapGenerator:
   literals:
   - |
     accounts.developer: login
-    accounts.developer.enabled: true
     accounts.devops: login
-    accounts.devops.enabled: true
   name: argocd-cm
 - behavior: merge
   literals:
