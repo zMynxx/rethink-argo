@@ -14,7 +14,7 @@ spec:
             secretName: sops-age
       initContainers:
         - name: install-ksops
-          image: viaductoss/ksops:v4.2.4
+          image: viaductoss/ksops:v4.3.1
           command: ["/bin/sh", "-c"]
           args:
             - echo "Installing KSOPS...";
@@ -39,4 +39,4 @@ spec:
             - name: XDG_CONFIG_HOME
               value: /.config
             - name: SOPS_AGE_KEY_FILE
-              value: /.config/sops/age/keys.txt
+              value: /.config/sops/age/key.txt
