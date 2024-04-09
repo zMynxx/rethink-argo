@@ -1,9 +1,0 @@
-p, proj:development:developer, clusters, get, https://kubernetes.default.svc:6443, allow
-p, proj:development:developer, repositories, get, https://github.com/zmynxx/rethink-argo.git, allow
-p, proj:development:developer, projects, get, development, allow
-g, developer, proj:development:developer
-p, proj:production:developer, clusters, get, https://kubernetes.default.svc:6443, allow
-p, proj:production:developer, repositories, get, https://github.com/zmynxx/rethink-argo.git, allow
-p, proj:production:developer, projects, get, production, allow
-g, develeap:developers, proj:production:developer
-g, developer, proj:production:developer
