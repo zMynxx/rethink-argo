@@ -36,6 +36,7 @@ spec:
               subPath: ksops
             - mountPath: /.config/sops/age/key.txt
               name: sops-age
+              readOnly: true
               # subPath: age
           # 4. Set the XDG_CONFIG_HOME env variable to allow kustomize to detect the plugin
           env:
