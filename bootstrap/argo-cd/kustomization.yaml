@@ -32,27 +32,53 @@ configMapGenerator:
         key: git_username
         name: autopilot-secret
   name: argocd-cm
-- behavior: merge
-  envs:
-  - rbac/.users
-  name: argocd-cm
-- behavior: merge
-  literals:
-  - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
-  name: argocd-cm
-- behavior: merge
-  literals:
-  - scopes='[groups]'
-  - policy.default=role:none
-  name: argocd-rbac-cm
-- behavior: merge
-  files:
-  - policy.default.csv
-  - policy.developers.csv
-  - policy.devops.csv
-  name: argocd-rbac-cm
+
+##########################
+## Custom modifications ##
+##########################
+# - behavior: merge
+#   envs:
+#   - rbac/.users
+#   name: argocd-cm
+# - behavior: merge
+#   literals:
+#   - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
+#   name: argocd-cm
+# - behavior: merge
+#   literals:
+#   - scopes='[groups]'
+#   - policy.default=role:none
+#   name: argocd-rbac-cm
+# - behavior: merge
+#   files:
+#   - policy.default.csv
+#   - policy.developers.csv
+#   - policy.devops.csv
+#   name: argocd-rbac-cm
 patches:
-  - path: ksops-init-container.patch.yaml
+  ############################
+  ## RBAC ConfigMap patches ##
+  ############################
+  - path: patches/rbac/argocd-cm.patch.yaml
     target:
+      kind: ConfigMap
+      name: argocd-cm
+      namespace: argocd
+  - path: patches/rbac/argocd-rbac-cm.patch.yaml
+    target:
+      kind: ConfigMap
+      name: argocd-rbac-cm
+      namespace: argocd
+  ###################
+  ## KSOPS patches ##
+  ###################
+  - path: patches/ksop/ksops-init-container.patch.yaml
+    target:
+      apiVersion: apps/v1
       kind: Deployment
       name: argocd-repo-server
+  - path: patches/ksops/kustomize-flags.patch.yaml
+    target:
+      kind: ConfigMap
+      name: argocd-cm
+      namespace: argocd
