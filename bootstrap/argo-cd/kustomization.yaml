@@ -23,6 +23,8 @@ configMapGenerator:
 - behavior: merge
   files:
   - policy.default.csv
+  - policy.developers.csv
+  - policy.devops.csv
   name: argocd-rbac-cm
 kind: Kustomization
 namespace: argocd
