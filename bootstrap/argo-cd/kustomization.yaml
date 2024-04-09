@@ -56,4 +56,3 @@ patches:
     target:
       kind: Deployment
       name: argocd-repo-server
-      namespace: argocd
