@@ -70,7 +70,7 @@ patches:
   ###################
   ## KSOPS patches ##
   ###################
-  - path: patches/ksop/ksops-init-container.patch.yaml
+  - path: patches/ksops/ksops-init-container.patch.yaml
     target:
       kind: Deployment
       name: argocd-repo-server
