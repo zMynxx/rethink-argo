@@ -8,6 +8,25 @@ metadata:
   name: development
   namespace: argocd
 spec:
+  syncWindows:
+    - kind: deny
+      schedule: '* * * * *'
+      duration: 1h
+      applications:
+      - '*'
+      clusters:
+      - development cluster
+      manualSync: true
+
+    # Allow syncinng from 7am to 8pm on weekdays, but deny on weekends
+    - kind: allow 
+      schedule: '* 7-20 * * 0-4'
+      duration: 1h
+      applications:
+      - '*'
+      clusters:
+      - development cluster
+      manualSync: true
   roles:
     - name: devops
       description: DevOps role for development project
