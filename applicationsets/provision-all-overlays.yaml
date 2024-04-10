@@ -64,7 +64,7 @@ spec:
 
         # The generator above creates a list, where each item is a path within the repository
         # for example, https://github.com/smipin/gitops/charts/nginx
-        path: '{{.path}}/overlays/{{.name}}'
+        path: '{{.path.path}}/overlays/{{.name}}'
       destination:
         # Deploy to specific servers
         server: '{{.server}}' 
