@@ -21,12 +21,12 @@ spec:
 
           # cluster generator, 'child' #2
           # this can also be '-clusters: {}' to select them all. However, less readable.
-          - clusters:
-              selector:
-                matchLabels:
-                  argocd.argoproj.io/secret-type: cluster
-          # - clusters: {}
-#
+          # - clusters:
+          #     selector:
+          #       matchLabels:
+          #         argocd.argoproj.io/secret-type: cluster
+          - clusters: {}
+
     ############################
     ## Example Item Generated ##
     ############################
@@ -39,7 +39,7 @@ spec:
     metadata:
       # use folder name as the application's name
       # for example, nginx
-      name: '{{.path.basename}}-{{.metadata.labels.environment}}'
+      name: '{{.path.basename}}-{{.name}}'
 
       # Application must be deployed into the same namespace as our argocd server
       # for argo to manage and visualize in the dashboard
