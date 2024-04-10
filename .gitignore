@@ -2,3 +2,4 @@ getting-started.sh
 *.secret.*
 key.txt
 keys.txt
+dump*

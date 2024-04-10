@@ -1,0 +1,31 @@
+# three node (two workers) cluster config
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    kubeadmConfigPatches:
+      - |
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=master"
+      ### Enable Ingress - https://kind.sigs.k8s.io/docs/user/ingress/#contour
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      - containerPort: 80
+        hostPort: 82
+        protocol: TCP
+      - containerPort: 443
+        hostPort: 445
+        protocol: TCP
+  - role: worker
+    kubeadmConfigPatches:
+      - |-
+        kind: JoinConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "role=worker"
