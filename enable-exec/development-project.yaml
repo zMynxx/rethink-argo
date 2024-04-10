@@ -40,6 +40,7 @@ spec:
         - p, proj:development:developer, applications, *, development/*, allow
         - p, proj:development:developer, applications, *, development/*, allow
         - p, proj:development:developer, logs, *, development/*, allow
+        - p, proj:development:developer, exec, create, development/*, allow
         # groups: ['systems:developers']
   clusterResourceWhitelist:
     - group: '*'
