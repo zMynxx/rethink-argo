@@ -27,7 +27,7 @@ configMapGenerator:
     repository.credentials=- passwordSecret:
         key: git_token
         name: autopilot-secret
-      url: https://github.com/
+      url: https://github.com/zmynxx/rethink-argo.git
       usernameSecret:
         key: git_username
         name: autopilot-secret
