@@ -21,12 +21,12 @@ spec:
 
           # cluster generator, 'child' #2
           # this can also be '-clusters: {}' to select them all. However, less readable.
-          # - clusters:
-          #     selector:
-          #       matchLabels:
-          #         argocd.argoproj.io/secret-type: cluster
-          - clusters: {}
-
+          - clusters:
+              selector:
+                matchLabels:
+                  argocd.argoproj.io/secret-type: cluster
+          # - clusters: {}
+#
     ############################
     ## Example Item Generated ##
     ############################
@@ -39,7 +39,7 @@ spec:
     metadata:
       # use folder name as the application's name
       # for example, nginx
-      name: '{{ .path.basename }}'
+      name: '{{.path.basename}}-{{.metadata.labels.environment}}'
 
       # Application must be deployed into the same namespace as our argocd server
       # for argo to manage and visualize in the dashboard
@@ -48,7 +48,7 @@ spec:
         - resources-finalizer.argocd.argoproj.io
     spec:
       # Deploy into specific projects, allows segregation.
-      project: '{{ .name }}'
+      project: '{{.name}}'
       syncPolicy:
         syncOptions:
           - CreateNamespace=true
@@ -64,11 +64,11 @@ spec:
 
         # The generator above creates a list, where each item is a path within the repository
         # for example, https://github.com/smipin/gitops/charts/nginx
-        path: '{{ .path }}/overlays/{{ .name }}'
+        path: '{{.path}}/overlays/{{.name}}'
       destination:
         # Deploy to specific servers
-        server: '{{ .server }}' 
+        server: '{{.server}}' 
 
         # use folder name as the application's namespace
         # also matches the application name.
-        namespace: '{{ path.basename }}'
+        namespace: '{{.path.basename}}'
