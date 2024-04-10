@@ -12,3 +12,5 @@ data:
   accounts.developer.enabled: 'true'
   accounts.devops: login
   accounts.devops.enabled: 'true'
+  exec.enabled: 'true'
+  exec.shells: bash, sh
