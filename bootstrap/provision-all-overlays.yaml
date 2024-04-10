@@ -1,0 +1,74 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: applicationset
+  namespace: argocd
+spec:
+  # Use go for this templating
+  #could also be 'fasttemplate', which is soon to be deprecated.
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    # matrix 'parent' generator
+    - matrix:
+        generators:
+          # git generator, 'child' #1
+          - git:
+              repoURL: https://github.com/zMynxx/rethink-argo.git
+              revision: HEAD
+              directories:
+                - path: apps/*
+
+          # cluster generator, 'child' #2
+          # this can also be '-clusters: {}' to select them all. However, less readable.
+          # - clusters:
+          #     selector:
+          #       matchLabels:
+          #         argocd.argoproj.io/secret-type: cluster
+          - clusters: {}
+
+    ############################
+    ## Example Item Generated ##
+    ############################
+    # - name: production
+    #   server: https://production-control-plane:6443
+    #   path: apps/nginx
+    #   path.basename: nginx
+
+  template:
+    metadata:
+      # use folder name as the application's name
+      # for example, nginx
+      name: '{{.path.basename}}-{{.name}}'
+
+      # Application must be deployed into the same namespace as our argocd server
+      # for argo to manage and visualize in the dashboard
+      namespace: argocd
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      # Deploy into specific projects, allows segregation.
+      project: '{{.name}}'
+      syncPolicy:
+        syncOptions:
+          - CreateNamespace=true
+          - Prune=false
+          - FailOnSharedResource=true
+        automated:
+          prune: true
+          selfHeal: true
+          allowEmpty: false
+      source:
+        repoURL: https://github.com/zMynxx/rethink-argo.git
+        targetRevision: HEAD
+
+        # The generator above creates a list, where each item is a path within the repository
+        # for example, https://github.com/smipin/gitops/charts/nginx
+        path: '{{.path.path}}/overlays/{{.name}}'
+      destination:
+        # Deploy to specific servers
+        server: '{{.server}}' 
+
+        # use folder name as the application's namespace
+        # also matches the application name.
+        namespace: '{{.path.basename}}'
