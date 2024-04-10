@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/name: argocd-cm
     app.kubernetes.io/part-of: argocd
 data:
+  accounts.admin.enabled: 'false'
   accounts.developer: login
   accounts.developer.enabled: 'true'
   accounts.devops: login
