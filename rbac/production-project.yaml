@@ -2,7 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
   annotations:
-    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://production-control-plane:6443 
     argocd.argoproj.io/sync-options: PruneLast=true
     argocd.argoproj.io/sync-wave: '-2'
   name: production
@@ -47,8 +47,8 @@ spec:
   description: production project
   destinations:
     - namespace: '*'
-      server: https://kubernetes.default.svc
-      name: production
+      server: https://production-control-plane:6443
+      name: production cluster
   sourceRepos:
     - https://github.com/zmynxx/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
