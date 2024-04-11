@@ -95,7 +95,7 @@ patches:
           apiGroups:
             - ''
           resources:
-            - 'pod/exec'
+            - 'pods/exec'
           verbs:
             - create
   - target:
@@ -110,7 +110,7 @@ patches:
           apiGroups:
             - ''
           resources:
-            - 'pod/exec'
+            - 'pods/exec'
           verbs:
             - create
   # - path: patches/enable-exec/role.patch.yaml
