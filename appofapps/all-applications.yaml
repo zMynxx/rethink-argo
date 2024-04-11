@@ -6,7 +6,7 @@ metadata:
 spec:
   destination:
     namespace: argocd
-    server: in-cluster 
+    server: https://kubernetes.default.svc 
   project: default
   source:
     path: applications
