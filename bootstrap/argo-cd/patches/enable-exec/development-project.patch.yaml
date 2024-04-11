@@ -9,6 +9,10 @@ metadata:
   namespace: argocd
 spec:
   roles:
+  - name: devops 
+    description: Devops role for development project
+    policies:
+      - p, proj:development:devops, exec, create, development/*, allow
   - name: developer
     description: Developer role for development project
     policies:
