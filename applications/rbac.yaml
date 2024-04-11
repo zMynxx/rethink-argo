@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: enable-exec 
+  name: rbac 
   namespace: argocd
 spec:
   destination:
