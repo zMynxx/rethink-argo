@@ -14,4 +14,8 @@ patches:
   - path: cluster-role.patch.yaml
     target:
       kind: ClusterRole
-      name: argocd-manager-role
+      name: argocd-server
+  - path: role.patch.yaml
+    target:
+      kind: Role
+      name: argocd-server
