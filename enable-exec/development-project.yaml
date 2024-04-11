@@ -8,49 +8,8 @@ metadata:
   name: development
   namespace: argocd
 spec:
-  syncWindows:
-    - kind: deny
-      schedule: '* * * * *'
-      duration: 1h
-      applications:
-      - '*'
-      clusters:
-      - development cluster
-      manualSync: true
-
-    # Allow syncinng from 7am to 8pm on weekdays, but deny on weekends
-    - kind: allow 
-      schedule: '* 7-20 * * 0-4'
-      duration: 1h
-      applications:
-      - '*'
-      clusters:
-      - development cluster
-      manualSync: true
   roles:
-    - name: devops
-      description: DevOps role for development project
-      policies: ['p, proj:development:devops, *, *, development/*, allow']
-      # groups: ['systems:devops']
-    - name: developer
-      description: Developer role for development project
-      policies:
-        ## Structure: p, <role/user/group>, <resource>, <action>, <appproject>/<object>
-        - p, proj:development:developer, applicationsets, *, development/*, allow
-        - p, proj:development:developer, applications, *, development/*, allow
-        - p, proj:development:developer, applications, *, development/*, allow
-        - p, proj:development:developer, logs, *, development/*, allow
-        - p, proj:development:developer, exec, create, development/*, allow
-        # groups: ['systems:developers']
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  description: development project
-  destinations:
-    - namespace: '*'
-      server: https://development-control-plane:6443
-      name: development cluster
-  sourceRepos:
-    - https://github.com/zmynxx/rethink-argo.git
-    - https://github.com/argoproj-labs/argocd-autopilot.git
-  permitOnlyProjectScopedClusters: true
+  - name: developer
+    description: Developer role for development project
+    policies:
+      - p, proj:development:developer, exec, create, development/*, allow
