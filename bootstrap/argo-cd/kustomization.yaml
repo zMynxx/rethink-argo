@@ -36,25 +36,6 @@ configMapGenerator:
 ##########################
 ## Custom modifications ##
 ##########################
-# - behavior: merge
-#   envs:
-#   - rbac/.users
-#   name: argocd-cm
-# - behavior: merge
-#   literals:
-#   - kustomize.buildOptions="--enable-alpha-plugins --enable-exec"
-#   name: argocd-cm
-# - behavior: merge
-#   literals:
-#   - scopes='[groups]'
-#   - policy.default=role:none
-#   name: argocd-rbac-cm
-# - behavior: merge
-#   files:
-#   - policy.default.csv
-#   - policy.developers.csv
-#   - policy.devops.csv
-#   name: argocd-rbac-cm
 patches:
   ############################
   ## RBAC ConfigMap patches ##
