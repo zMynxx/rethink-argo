@@ -124,6 +124,10 @@ patches:
   - path: patches/enable-exec/argocd-cm.patch.yaml
     target:
       kind: ConfigMap
+      name: argocd-cmd-params-cm
+  - path: patches/enable-exec/argocd-cm.patch.yaml
+    target:
+      kind: ConfigMap
       name: argocd-cm
   - path: patches/enable-exec/development-project.patch.yaml
     target:
