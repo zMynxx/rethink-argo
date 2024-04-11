@@ -29,7 +29,7 @@ We are going to start by talk about basic and advanced ArgoCD features:
 
 ## The Goal
 
-![image.png](arcitecture.png)
+![image.png](architecture.png)
 
 By the end of this session we should be capable of managing multiple Kubernetes cluster using a single Git repository, and a single ArgoCD deployment. All declaratively configured, leveraging different ArgoCD capabilities.
 
