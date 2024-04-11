@@ -83,21 +83,21 @@ patches:
   ## Enable Exec ##
   #################
 
-  - target:
-      group: rbac.authorization.k8s.io
-      version: v1
-      kind: Role 
-      name: argocd-server
-    patch: |-
-      - op: add
-        path: /rules/0
-        value:
-          apiGroups:
-            - ''
-          resources:
-            - 'pods/exec'
-          verbs:
-            - create
+  # - target:
+  #     group: rbac.authorization.k8s.io
+  #     version: v1
+  #     kind: Role 
+  #     name: argocd-server
+  #   patch: |-
+  #     - op: add
+  #       path: /rules/0
+  #       value:
+  #         apiGroups:
+  #           - ''
+  #         resources:
+  #           - 'pods/exec'
+  #         verbs:
+  #           - create
   - target:
       group: rbac.authorization.k8s.io
       version: v1
