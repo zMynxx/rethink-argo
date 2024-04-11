@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: enable-exec 
+  namespace: argocd
+spec:
+  destination:
+    namespace: argocd
+    server: https://kubernetes.default.svc 
+  project: default
+  source:
+  - path: ksops/argocd 
+    repoURL: https://github.com/zMynxx/rethink-argo.git
+  - path: ksops/secrets
+    repoURL: https://github.com/zMynxx/rethink-argo.git
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - allowEmpty=true
