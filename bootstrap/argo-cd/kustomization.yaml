@@ -82,14 +82,45 @@ patches:
   #################
   ## Enable Exec ##
   #################
-  - path: patches/enable-exec/role.patch.yaml
-    target:
-      kind: Role
+
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: Role 
       name: argocd-server
-  - path: patches/enable-exec/cluster-role.patch.yaml
-    target:
-      kind: ClusterRole
+    patch: |-
+      - op: add
+        path: /rules/0
+        value:
+          apiGroups:
+            - ''
+          resources:
+            - 'pod/exec'
+          verbs:
+            - create
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole 
       name: argocd-server
+    patch: |-
+      - op: add
+        path: /rules/0
+        value:
+          apiGroups:
+            - ''
+          resources:
+            - 'pod/exec'
+          verbs:
+            - create
+  # - path: patches/enable-exec/role.patch.yaml
+  #   target:
+  #     kind: Role
+  #     name: argocd-server
+  # - path: patches/enable-exec/cluster-role.patch.yaml
+  #   target:
+  #     kind: ClusterRole
+  #     name: argocd-server
   - path: patches/enable-exec/argocd-cm.patch.yaml
     target:
       kind: ConfigMap
