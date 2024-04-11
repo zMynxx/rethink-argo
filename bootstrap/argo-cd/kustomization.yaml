@@ -113,6 +113,16 @@ patches:
             - 'pods/exec'
           verbs:
             - create
+
+  # - target:
+  #     kind: ConfigMap 
+  #     name: argocd-cmd-params-cm
+  #   patch: |-
+  #     - op: add
+  #       path: /data/-
+  #       value:
+  #         server.insecure: 'true'
+
   # - path: patches/enable-exec/role.patch.yaml
   #   target:
   #     kind: Role
@@ -121,7 +131,7 @@ patches:
   #   target:
   #     kind: ClusterRole
   #     name: argocd-server
-  - path: patches/enable-exec/argocd-cm.patch.yaml
+  - path: patches/enable-exec/argocd-cmd-params-cm.patch.yaml
     target:
       kind: ConfigMap
       name: argocd-cmd-params-cm
