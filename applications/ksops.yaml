@@ -8,7 +8,7 @@ spec:
     namespace: argocd
     server: https://kubernetes.default.svc 
   project: default
-  source:
+  sources:
   - path: ksops/argocd 
     repoURL: https://github.com/zMynxx/rethink-argo.git
   - path: ksops/secrets
