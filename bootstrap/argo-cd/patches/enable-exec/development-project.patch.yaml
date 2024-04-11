@@ -1,0 +1,15 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd-autopilot.argoproj-labs.io/default-dest-server: https://development-control-plane:6443
+    argocd.argoproj.io/sync-options: PruneLast=true
+    argocd.argoproj.io/sync-wave: '-2'
+  name: development
+  namespace: argocd
+spec:
+  roles:
+  - name: developer
+    description: Developer role for development project
+    policies:
+      - p, proj:development:developer, exec, create, development/*, allow
