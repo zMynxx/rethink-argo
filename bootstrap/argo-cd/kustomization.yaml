@@ -9,17 +9,17 @@ configMapGenerator:
     literals:
       - "timeout.reconciliation=15s"
 
-  - behavior: merge
-    literals:
-    - |
-      repository.credentials=- passwordSecret:
-          key: git_token
-          name: autopilot-secret
-        url: https://github.com/zmynxx/rethink-argo.git
-        usernameSecret:
-          key: git_username
-          name: autopilot-secret
-    name: argocd-cm
+  # - behavior: merge
+  #   literals:
+  #   - |
+  #     repository.credentials=- passwordSecret:
+  #         key: git_token
+  #         name: autopilot-secret
+  #       url: https://github.com/zmynxx/rethink-argo.git
+  #       usernameSecret:
+  #         key: git_username
+  #         name: autopilot-secret
+  #   name: argocd-cm
 
 patches:
   # reset the crbs to `subject.namespace: default`, so that argo-cd will later change them to the actual ns
