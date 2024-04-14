@@ -9,6 +9,18 @@ configMapGenerator:
     literals:
       - "timeout.reconciliation=15s"
 
+  - behavior: merge
+    literals:
+    - |
+      repository.credentials=- passwordSecret:
+          key: git_token
+          name: autopilot-secret
+        url: https://github.com/zmynxx/rethink-argo.git
+        usernameSecret:
+          key: git_username
+          name: autopilot-secret
+    name: argocd-cm
+
 patches:
   # reset the crbs to `subject.namespace: default`, so that argo-cd will later change them to the actual ns
   - target:
@@ -20,23 +32,9 @@ patches:
         path: /subjects/0/namespace
         value: default
 
-configMapGenerator:
-- behavior: merge
-  literals:
-  - |
-    repository.credentials=- passwordSecret:
-        key: git_token
-        name: autopilot-secret
-      url: https://github.com/zmynxx/rethink-argo.git
-      usernameSecret:
-        key: git_username
-        name: autopilot-secret
-  name: argocd-cm
-
 ##########################
 ## Custom modifications ##
 ##########################
-patches:
   ############################
   ## RBAC ConfigMap patches ##
   ############################
@@ -64,54 +62,45 @@ patches:
   ## Enable Exec ##
   #################
 
-  # - target:
-  #     group: rbac.authorization.k8s.io
-  #     version: v1
-  #     kind: Role 
-  #     name: argocd-server
-  #   patch: |-
-  #     - op: add
-  #       path: /rules/0
-  #       value:
-  #         apiGroups:
-  #           - ''
-  #         resources:
-  #           - 'pods/exec'
-  #         verbs:
-  #           - create
-  # - target:
-  #     group: rbac.authorization.k8s.io
-  #     version: v1
-  #     kind: ClusterRole 
-  #     name: argocd-server
-  #   patch: |-
-  #     - op: add
-  #       path: /rules/0
-  #       value:
-  #         apiGroups:
-  #           - ''
-  #         resources:
-  #           - 'pods/exec'
-  #         verbs:
-  #           - create
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: Role 
+      name: argocd-server
+    patch: |-
+      - op: add
+        path: /rules/0
+        value:
+          apiGroups:
+            - ''
+          resources:
+            - 'pods/exec'
+          verbs:
+            - create
+  - target:
+      group: rbac.authorization.k8s.io
+      version: v1
+      kind: ClusterRole 
+      name: argocd-server
+    patch: |-
+      - op: add
+        path: /rules/0
+        value:
+          apiGroups:
+            - ''
+          resources:
+            - 'pods/exec'
+          verbs:
 
-  # - path: patches/enable-exec/role.patch.yaml
-  #   target:
-  #     kind: Role
-  #     name: argocd-server
-  # - path: patches/enable-exec/cluster-role.patch.yaml
-  #   target:
-  #     kind: ClusterRole
-  #     name: argocd-server
   # - path: patches/enable-exec/argocd-cmd-params-cm.patch.yaml
   #   target:
   #     kind: ConfigMap
   #     name: argocd-cmd-params-cm
-  # - path: patches/enable-exec/argocd-cm.patch.yaml
-  #   target:
-  #     kind: ConfigMap
-  #     name: argocd-cm
-  # - path: patches/enable-exec/development-project.patch.yaml
-  #   target:
-  #     kind: AppProject
-  #     name: development
+  - path: patches/enable-exec/argocd-cm.patch.yaml
+    target:
+      kind: ConfigMap
+      name: argocd-cm
+  - path: patches/enable-exec/development-project.patch.yaml
+    target:
+      kind: AppProject
+      name: development

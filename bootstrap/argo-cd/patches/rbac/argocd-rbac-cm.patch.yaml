@@ -32,6 +32,5 @@ data:
     p, role:devops, certificates, *, *, allow
     p, role:devops, accounts, *, *, allow
     p, role:devops, gpgkeys, *, *, allow
-    p, role:devops, exec, *, *, allow
     g, devops, role:devops
     g, devops, role:admin
