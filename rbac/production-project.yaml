@@ -15,7 +15,7 @@ spec:
       applications:
       - '*'
       clusters:
-      - production cluster
+      - production
       manualSync: true
 
     # Allow syncinng from 7am to 8pm on weekdays, but deny on weekends
