@@ -25,7 +25,7 @@ spec:
       applications:
       - '*'
       clusters:
-      - production cluster
+      - production
       manualSync: true
   roles:
     - name: devops
@@ -44,11 +44,11 @@ spec:
   clusterResourceWhitelist:
     - group: '*'
       kind: '*'
-  description: production project
+  description: production
   destinations:
     - namespace: '*'
       server: https://production-control-plane:6443
-      name: production cluster
+      name: production
   sourceRepos:
     - https://github.com/zmynxx/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
