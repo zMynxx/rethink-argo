@@ -1,6 +1,0 @@
-# creation rules are evaluated sequentially, the first match wins
-creation_rules:
-  - path_regex: .*\.secret\.yaml$
-    encrypted_regex: ^(data|stringData)$
-    # unencrypted_regex: ^(apiVersion|metadata|kind|type)$
-    age: age1zge2l5uxpph0x3u0qg53h8jg8mf0m6kce249lv73nv7e9mwc3chq92f6cj

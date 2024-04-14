@@ -31,7 +31,7 @@ patches:
     patch: |-
       - op: replace
         path: /subjects/0/namespace
-        value: default
+        value: argocd
 
 ##########################
 ## Custom modifications ##
