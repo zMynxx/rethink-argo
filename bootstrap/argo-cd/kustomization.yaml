@@ -2,6 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
   - https://raw.githubusercontent.com/argoproj/argo-cd/v2.10.6/manifests/install.yaml
+# namespace: argocd
 
 configMapGenerator:
   - name: argocd-cm
@@ -69,7 +70,7 @@ patches:
       name: argocd-server
     patch: |-
       - op: add
-        path: /rules/0
+        path: /rules/-
         value:
           apiGroups:
             - ''
@@ -84,13 +85,14 @@ patches:
       name: argocd-server
     patch: |-
       - op: add
-        path: /rules/0
+        path: /rules/-
         value:
           apiGroups:
             - ''
           resources:
             - 'pods/exec'
           verbs:
+            - create
 
   # - path: patches/enable-exec/argocd-cmd-params-cm.patch.yaml
   #   target:
