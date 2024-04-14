@@ -15,7 +15,7 @@ spec:
       applications:
       - '*'
       clusters:
-      - development cluster
+      - development
       manualSync: true
 
     # Allow syncinng from 7am to 8pm on weekdays, but deny on weekends
@@ -25,7 +25,7 @@ spec:
       applications:
       - '*'
       clusters:
-      - development cluster
+      - development
       manualSync: true
   roles:
     - name: devops
@@ -48,7 +48,7 @@ spec:
   destinations:
     - namespace: '*'
       server: https://development-control-plane:6443
-      name: development cluster
+      name: development
   sourceRepos:
     - https://github.com/zmynxx/rethink-argo.git
     - https://github.com/argoproj-labs/argocd-autopilot.git
