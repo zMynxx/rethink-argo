@@ -24,6 +24,8 @@ We are going to start by talk about basic and advanced ArgoCD features:
 - Webhooks, polling - why and why not ?
 - Different Sync options
 Then we will try our Argo Rollouts and Argo Workflows, and examine the use cases, benefits.
+---
+
 ## The Goal
 ![image.png](architecture.png "")
 
@@ -86,6 +88,8 @@ _*Patch operations are easier with Kustomize._
 
 _**Kustomize can also be integrated with SOPS._
 
+---
+
 ### Configure the repository
 Althought we have configured the webhook which seems like all the integration between GitHub and ArgoCD, it is infact only the configuration allowing to github reach out to argo and say "Hey argo! Start sync, please".
 
@@ -137,6 +141,8 @@ metadata:
 # (...)
 ```
 *Again, Kustomize can make our life easier by using secretGenerators.
+
+---
 
 ##### Project and Policies
 Creating a project declaratively requires an `AppProject` manifest, and for each project we would have to declare and assign the permissions policies.
@@ -250,6 +256,8 @@ data:
     p, role:devops, projects, *, *, allow
     g, develeap:devops, role:devops
 ```
+---
+
 #### Creating Applications, using a tamplate
 One of the resources ArgoCD lets us leverage is called ApplicationSet.
 
@@ -373,6 +381,8 @@ spec:
     server: "{{ .server }}"
     namespace: "{{ .path.basename }}"
 ```
+---
+
 ## Sync waves, and Sync options
 The are both related to sync, however quite different.
 
@@ -483,6 +493,8 @@ spec:
       - development
     manualSync: true
 ```
+---
+
 ## Notifications
 Argo notifications used to be a independent project by Argo Project, which served as an extension to the basic ArgoCD ecosystem. It is meant to provide a unified notifications system, according to different events, which could be quite custom to ArgoCD. An ArgoCD Application's failed sync operation, for example.
 
@@ -749,6 +761,8 @@ It will install ArgoCD onto your cluster, while creating manifest and folder str
 
 The cli offer projects management (create, delete, list), application managment, and bootstrapping (install/uninstall). It's great to use as a base template of even as an Observability over ArgoCD using ArgoCD, but permissions and cluster/repository secret should still be declared separately (if you are following the segregated approach).
 
+---
+
 ## KSOPS (Kustomize + SecretsOPerationS )
 Sops is very similar to the well known "Sealed Secrets", the key difference is that in sops you own / provide you own encryption key (age, gpg, kms, etc) and has great integrations with many tools such as Kustomize and Terragrunt.
 
@@ -872,6 +886,8 @@ files:
 - Apply using kustomize and the required flags:
 `kustomize build --enable-alpha-plugins --enable-exec .` 
 In your interested in learning more about sops and setting it up, check out my other repository, named [﻿toolbox](https://github.com/zMynxx/Toolbox/tree/feature/sops-aghe/mozilla-sops/age) .
+---
+
 # Common Issues and solutions
 - "Unable to extract token claims" - The connection protocol for login is not set correctly, and the grpc-web-root-path is not set.
 ```bash
